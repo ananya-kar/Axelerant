@@ -1,7 +1,7 @@
 <?php 
 
 /**
- * Implementation of hook_webform_select_options_info.
+ * Implementation of hook_siteinformation_alter.
  */
 function sitealter_menu() {
 	
