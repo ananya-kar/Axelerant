@@ -1,0 +1,51 @@
+<?php 
+
+/**
+ * Implementation of hook_webform_select_options_info.
+ */
+function sitealter_menu() {
+	
+  $items = array();
+
+  $items['page_json/FOOBAR12345/%'] = array(
+    'title' => 'Jason format',
+	'description' => 'Jason format',
+	'page callback' => 'json_format',
+	'access arguments' => array('access content'),
+	'type' => MENU_NORMAL_ITEM,
+	'file' => 'sitealter.inc',
+	'weight' => 1,
+  );
+
+  return $items;
+}
+function sitealter_form_alter(&$form, &$form_state, $form_id) 
+{
+	//To get he variable of site_api_key field
+	if(variable_get("siteapikey", $default = NULL)!='')
+	$siteapikey=variable_get("siteapikey", $default = NULL);
+	else
+	$siteapikey="No API Key yet";
+	if($form_id=="system_site_information_settings")
+	{
+		//To make an extra field Site Api Key
+		$form['site_api_key']=array(
+			'#type'=>"textfield",
+			'#title'=>t("Site API Key"),
+			'#default_value'=>$siteapikey,
+			'#prefix'=>"<div>",
+			'#suffix'=>"</div>",
+		);
+		$form['actions']['submit']['#value'] = 'Update Configuration';
+		$form['#submit'][]='sitealter_form_submit';
+	}
+	return $form;
+}
+function sitealter_form_submit(&$form, &$form_state)
+{
+	////To set the variable of site_api_key field
+	$site_api_key=$form_state['input']['site_api_key'];
+	variable_set("siteapikey", $site_api_key);
+	$siteapikey=variable_get("siteapikey", $default = NULL);
+	drupal_set_message(t("Site API Key has been saved with the value ".$siteapikey));
+}
